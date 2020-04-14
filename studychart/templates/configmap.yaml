@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
+  {{- $relName := .Release.Name -}}
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "milk" | repeat 5 | quote }}
+  food: {{ .food | upper | quote }}
+  release: {{ $relName }}
+  releasev2: {{ $.Release.Name }}
+  {{- end }}
+  {{/*  ssss */}}
+  {{- range $key, $val := .Values.favorite }}
+  {{ $key }} : {{ $val | quote | upper }}
+  {{- end }}
+  {{- if eq .Values.favorite.drink "coffee" }}
+  mug: true
+  {{- end }}
+  toppings: |-
+    {{- range .Values.pizzaToppings }}
+    - {{ . | title | quote }}
+    {{- end }}
+  toppingsv2: |-
+    {{- range $index, $topping := .Values.pizzaToppings }}
+    {{ $index }}: {{ $topping }}
+    {{- end }}
+  sizes: |-
+    {{- range tuple "small" "medium" "large" }}
+    - {{ . }}
+    {{- end }}
+  favorite: &favoriteCoffee "Cappucino"
+  coffee: |-
+    Latte
+    *favoriteCoffee
+    Espresso
+# output would be  Latte\nCappuccino\nEspresso without trailing newline
+  coffee: |+
+    Latte
+    Cappuccino
+    Espresso
+
+
+# output would be  Latte\nCappuccino\nEspresso\n\n\n with trailing newline
+  another: value
+  coffeev2: >
+    Latte
+    Cappuccino
+    Espresso
+# output would be  Latte Cappuccino Espresso\n
