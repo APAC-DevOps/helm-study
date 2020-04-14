@@ -6,3 +6,9 @@ pizzaToppings:
   - cheese
   - peppers
   - onions
+
+studysubchart:
+  dessert: "ice cream"
+
+global:
+  salad: caesar
